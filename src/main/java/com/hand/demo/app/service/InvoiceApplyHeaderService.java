@@ -1,9 +1,10 @@
 package com.hand.demo.app.service;
 
+import com.hand.demo.api.dto.InvoiceHeaderDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import com.hand.demo.domain.entity.InvoiceApplyHeader;
-import com.hand.demo.domain.dto.InvoiceHeaderDTO;
+import com.hand.demo.api.dto.InvoiceHeaderDTO;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface InvoiceApplyHeaderService {
      * @param invoiceApplyHeaders 查询条件
      * @return 返回值
      */
-    Page<InvoiceApplyHeader> selectList(PageRequest pageRequest, InvoiceApplyHeader invoiceApplyHeaders);
+    Page<InvoiceHeaderDTO> selectList(PageRequest pageRequest, InvoiceApplyHeader invoiceApplyHeaders);
 
     /**
      * 保存数据
@@ -30,7 +31,5 @@ public interface InvoiceApplyHeaderService {
      * @param invoiceApplyHeaders 数据
      */
     void saveData(List<InvoiceApplyHeader> invoiceApplyHeaders);
-
-    Page<InvoiceHeaderDTO> listInvoiceHeaders(PageRequest pageRequest, InvoiceHeaderDTO invoiceHeaderDTO, Integer delFlag);
 }
 

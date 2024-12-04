@@ -1,5 +1,6 @@
 package com.hand.demo.api.controller.v1;
 
+import com.hand.demo.api.dto.InvoiceHeaderDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
@@ -37,17 +38,17 @@ public class InvoiceApplyHeaderController extends BaseController {
     @Autowired
     private InvoiceApplyHeaderService invoiceApplyHeaderService;
 
-    @ApiOperation(value = "列表")
+    @ApiOperation(value = "List")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping
-    public ResponseEntity<Page<InvoiceApplyHeader>> list(InvoiceApplyHeader invoiceApplyHeader, @PathVariable Long organizationId,
-                                                         @ApiIgnore @SortDefault(value = InvoiceApplyHeader.FIELD_APPLY_HEADER_ID,
+    public ResponseEntity<Page<InvoiceHeaderDTO>> list(InvoiceApplyHeader invoiceApplyHeader, @PathVariable Long organizationId,
+                                                       @ApiIgnore @SortDefault(value = InvoiceApplyHeader.FIELD_APPLY_HEADER_ID,
                                                                  direction = Sort.Direction.DESC) PageRequest pageRequest) {
-        Page<InvoiceApplyHeader> list = invoiceApplyHeaderService.selectList(pageRequest, invoiceApplyHeader);
+        Page<InvoiceHeaderDTO> list = invoiceApplyHeaderService.selectList(pageRequest, invoiceApplyHeader);
         return Results.success(list);
     }
 
-    @ApiOperation(value = "明细")
+    @ApiOperation(value = "Details")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/{applyHeaderId}/detail")
     public ResponseEntity<InvoiceApplyHeader> detail(@PathVariable Long applyHeaderId) {
@@ -55,7 +56,7 @@ public class InvoiceApplyHeaderController extends BaseController {
         return Results.success(invoiceApplyHeader);
     }
 
-    @ApiOperation(value = "创建或更新")
+    @ApiOperation(value = "Create or update")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping
     public ResponseEntity<List<InvoiceApplyHeader>> save(@PathVariable Long organizationId, @RequestBody List<InvoiceApplyHeader> invoiceApplyHeaders) {
@@ -66,7 +67,7 @@ public class InvoiceApplyHeaderController extends BaseController {
         return Results.success(invoiceApplyHeaders);
     }
 
-    @ApiOperation(value = "删除")
+    @ApiOperation(value = "Delete")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @DeleteMapping
     public ResponseEntity<?> remove(@RequestBody List<InvoiceApplyHeader> invoiceApplyHeaders) {

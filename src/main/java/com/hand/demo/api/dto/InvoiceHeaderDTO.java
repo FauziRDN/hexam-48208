@@ -1,5 +1,5 @@
-package com.hand.demo.domain.dto;
-
+package com.hand.demo.api.dto;
+import com.hand.demo.domain.entity.InvoiceApplyHeader;
 import com.hand.demo.domain.entity.InvoiceApplyLine;
 import io.choerodon.mybatis.domain.AuditDomain;
 import io.choerodon.mybatis.annotation.ModifyAudit;
@@ -7,6 +7,8 @@ import io.choerodon.mybatis.annotation.VersionAudit;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hzero.boot.platform.lov.annotation.LovValue;
 
 import javax.persistence.*;
@@ -14,33 +16,19 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @ApiModel("Invoice Header")
-@ModifyAudit
-@VersionAudit
-@Table(name = "invoice_header")
-@Data // Menggunakan Lombok untuk otomatis generate getter/setter, equals, hashcode, toString
-public class InvoiceHeaderDTO  {
+@Setter
+@Getter
+public class InvoiceHeaderDTO extends InvoiceApplyHeader {
 
-    @ApiModelProperty("ID")
-    @Id
-    @GeneratedValue
-    private Long id;
+    @ApiModelProperty(value = "Apply Status Meaning")
+    private String applyStatusMeaning;
 
-    @ApiModelProperty(value = "Invoice Number")
-    @NotNull
-    private String invoiceNumber;
-
-    @ApiModelProperty(value = "Invoice Type")
-    @NotNull
-    @LovValue(lovCode = "INVOICE_TYPE", meaningField = "invoiceTypeMeaning")
-    private String invoiceType;
+    @ApiModelProperty(value = "Invoice Color Meaning")
+    private String invoiceColorMeaning;
 
     @ApiModelProperty(value = "Invoice Type Meaning")
     private String invoiceTypeMeaning;
 
-    @ApiModelProperty(value = "Deleted Flag")
-    private Integer deletedFlag;
-
-    @ApiModelProperty(value = "Line Details")
-    private List<InvoiceHeaderDTO> lines;
-
+//    public void setInvoiceStatus(String s) {
+//    }
 }

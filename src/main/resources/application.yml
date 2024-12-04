@@ -95,3 +95,7 @@ logging:
     org.apache.ibatis: debug
     io.choerodon: debug
     com.hand: debug
+hzero:
+  lov:
+    sql:
+      enabled: true

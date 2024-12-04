@@ -1,5 +1,8 @@
 package com.hand.demo.domain.repository;
 
+import com.hand.demo.api.dto.InvoiceHeaderDTO;
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.hzero.mybatis.base.BaseRepository;
 import com.hand.demo.domain.entity.InvoiceApplyHeader;
 
@@ -12,6 +15,9 @@ import java.util.List;
  * @since 2024-12-03 09:34:44
  */
 public interface InvoiceApplyHeaderRepository extends BaseRepository<InvoiceApplyHeader> {
+    static Page<InvoiceApplyHeader> listInvoiceHeaders(String searchQuery, InvoiceHeaderDTO invoiceHeaderDTO, PageRequest pageRequest) {
+        return listInvoiceHeaders(searchQuery, invoiceHeaderDTO, pageRequest);
+    }
     /**
      * 查询
      *
