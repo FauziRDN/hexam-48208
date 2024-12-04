@@ -36,15 +36,13 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
 
     @Override
     public Page<InvoiceHeaderDTO> selectList(PageRequest pageRequest, InvoiceApplyHeader invoiceApplyHeader) {
-        Page<InvoiceHeaderDTO> page = PageHelper.doPageAndSort(pageRequest,
+        Page<InvoiceApplyHeader> originalPage = PageHelper.doPageAndSort(pageRequest,
                 () -> invoiceApplyHeaderRepository.selectList(invoiceApplyHeader));
 
-        // Iterate over each header in the page and translate necessary fields
-        page.stream().map(header -> {
-            InvoiceHeaderDTO invoiceHeaderDTO = new InvoiceHeaderDTO();
-            BeanUtils.copyProperties(header, invoiceHeaderDTO);
 
-            // Translate the values using LOV (Value Set) adapter
+            List<InvoiceHeaderDTO> convertedContent = originalPage.getContent().stream().map(header -> {
+                InvoiceHeaderDTO invoiceHeaderDTO = new InvoiceHeaderDTO();
+                BeanUtils.copyProperties(header, invoiceHeaderDTO);
             invoiceHeaderDTO.setInvoiceColorMeaning(lovAdapter.queryLovMeaning("HEXAM-INV-HEADER-COLOR-48208", header.getTenantId(), header.getInvoiceColor()));
             invoiceHeaderDTO.setInvoiceTypeMeaning(lovAdapter.queryLovMeaning("HEXAM-INV-HEADER-TYPE-48208", header.getTenantId(), header.getInvoiceType()));
             invoiceHeaderDTO.setApplyStatusMeaning(lovAdapter.queryLovMeaning("HEXAM-INV-HEADER-STATUS-48208", header.getTenantId(), header.getApplyStatus()));
@@ -52,8 +50,11 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
             return invoiceHeaderDTO;
         }).collect(Collectors.toList());
 
+        Page<InvoiceHeaderDTO> convertedPage = new Page<>();
+        BeanUtils.copyProperties(originalPage, convertedPage, "content");
+        convertedPage.setContent(convertedContent);
 
-        return page;
+        return convertedPage;
     }
 
     @Override
