@@ -5,6 +5,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import com.hand.demo.domain.entity.InvoiceApplyHeader;
 import com.hand.demo.api.dto.InvoiceHeaderDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -31,5 +32,7 @@ public interface InvoiceApplyHeaderService {
      * @param invoiceApplyHeaders 数据
      */
     void saveData(List<InvoiceApplyHeader> invoiceApplyHeaders);
+
+    ResponseEntity<InvoiceApplyHeader> deleteById(Long applyHeaderId);
 }
 

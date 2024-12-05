@@ -121,7 +121,7 @@ public class InvoiceApplyHeader extends AuditDomain {
     private Integer delFlag;
 
     @ApiModelProperty(value = "sum(line exclude_tax_amount)")
-    private Object excludeTaxAmount;
+    private Double excludeTaxAmount;
 
     @ApiModelProperty(value = "(need Value Set) R : Red invoice B : Blue invoice")
     private String invoiceColor;
@@ -129,17 +129,17 @@ public class InvoiceApplyHeader extends AuditDomain {
     @ApiModelProperty(value = "(need Value Set) P : Paper invoice E : E-invoice")
     private String invoiceType;
 
-    private Object remark;
+    private String remark;
 
     private Date submitTime;
 
     @ApiModelProperty(value = "sum(line tax_amount)")
-    private Object taxAmount;
+    private Double taxAmount;
 
     private Long tenantId;
 
     @ApiModelProperty(value = "sum(line total_amount)")
-    private Object totalAmount;
+    private Double totalAmount;
 
 
 }

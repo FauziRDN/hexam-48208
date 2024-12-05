@@ -67,13 +67,12 @@ public class InvoiceApplyHeaderController extends BaseController {
         return Results.success(invoiceApplyHeaders);
     }
 
-    @ApiOperation(value = "Delete")
-    @Permission(level = ResourceLevel.ORGANIZATION)
-    @DeleteMapping
-    public ResponseEntity<?> remove(@RequestBody List<InvoiceApplyHeader> invoiceApplyHeaders) {
-        SecurityTokenHelper.validToken(invoiceApplyHeaders);
-        invoiceApplyHeaderRepository.batchDeleteByPrimaryKey(invoiceApplyHeaders);
-        return Results.success();
+
+    @ApiOperation(value = "Save Delete")
+    @Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)
+    @DeleteMapping("/{applyHeaderId}")
+    public ResponseEntity<InvoiceApplyHeader> deleteById(@PathVariable Long applyHeaderId) {
+        return invoiceApplyHeaderService.deleteById(applyHeaderId);
     }
 
 }
