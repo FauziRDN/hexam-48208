@@ -21,6 +21,6 @@ public interface InvoiceApplyHeaderMapper extends BaseMapper<InvoiceApplyHeader>
      */
     List<InvoiceApplyHeader> selectList(InvoiceApplyHeader invoiceApplyHeader);
 
-    List selectInvoiceHeaders(InvoiceHeaderDTO invoiceHeaderDTO, Integer delFlag);
+//    List selectInvoiceHeaders(InvoiceHeaderDTO invoiceHeaderDTO, Integer delFlag);
 }
 

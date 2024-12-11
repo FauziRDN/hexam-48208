@@ -1,5 +1,7 @@
 package com.hand.demo.infra.repository.impl;
 
+import com.hand.demo.domain.entity.InvoiceApplyHeader;
+import com.hand.demo.domain.repository.InvoiceApplyHeaderRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.springframework.stereotype.Component;
@@ -8,6 +10,7 @@ import com.hand.demo.domain.repository.InvoiceApplyLineRepository;
 import com.hand.demo.infra.mapper.InvoiceApplyLineMapper;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,6 +23,8 @@ import java.util.List;
 public class InvoiceApplyLineRepositoryImpl extends BaseRepositoryImpl<InvoiceApplyLine> implements InvoiceApplyLineRepository {
     @Resource
     private InvoiceApplyLineMapper invoiceApplyLineMapper;
+    @Resource
+    private InvoiceApplyHeaderRepository invoiceApplyHeaderRepository;
 
     @Override
     public List<InvoiceApplyLine> selectList(InvoiceApplyLine invoiceApplyLine) {
@@ -37,5 +42,17 @@ public class InvoiceApplyLineRepositoryImpl extends BaseRepositoryImpl<InvoiceAp
         return invoiceApplyLines.get(0);
     }
 
+    @Override
+    public List<InvoiceApplyLine> selectByHeaderId(Long applyHeaderId) {
+        return Collections.emptyList();
+    }
+    @Override
+    public boolean isValidHeaderId(Long applyHeaderId) {
+        if (applyHeaderId == null) {
+            return false;
+        }
+        InvoiceApplyHeader header = invoiceApplyHeaderRepository.selectByPrimary(applyHeaderId);
+        return header != null && header.getDelFlag() == 0;
+    }
 }
 

@@ -20,12 +20,15 @@ import java.util.List;
 @Getter
 public class InvoiceHeaderDTO extends InvoiceApplyHeader {
 
+    @Transient
     @ApiModelProperty(value = "Apply Status Meaning")
     private String applyStatusMeaning;
 
+    @Transient
     @ApiModelProperty(value = "Invoice Color Meaning")
     private String invoiceColorMeaning;
 
+    @Transient
     @ApiModelProperty(value = "Invoice Type Meaning")
     private String invoiceTypeMeaning;
 

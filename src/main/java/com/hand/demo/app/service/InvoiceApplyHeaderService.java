@@ -24,7 +24,10 @@ public interface InvoiceApplyHeaderService {
      * @param invoiceApplyHeaders 查询条件
      * @return 返回值
      */
-    Page<InvoiceHeaderDTO> selectList(PageRequest pageRequest, InvoiceApplyHeader invoiceApplyHeaders);
+    Page<InvoiceApplyHeader> selectList(PageRequest pageRequest, InvoiceApplyHeader invoiceApplyHeaders);
+
+    //nomor empat buat munculin redis
+    ResponseEntity<InvoiceApplyHeader> detailWithLine(Long applyHeaderId);
 
     /**
      * 保存数据
@@ -32,7 +35,10 @@ public interface InvoiceApplyHeaderService {
      * @param invoiceApplyHeaders 数据
      */
     void saveData(List<InvoiceApplyHeader> invoiceApplyHeaders);
-
+    void deleteRedisCache(InvoiceApplyHeader header);
     ResponseEntity<InvoiceApplyHeader> deleteById(Long applyHeaderId);
+    void updateHeaderAmounts(Long applyHeaderId);
+
+
 }
 

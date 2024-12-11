@@ -12,13 +12,16 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hzero.boot.platform.lov.annotation.LovValue;
 
 /**
  * (InvoiceApplyHeader)实体类
@@ -77,7 +80,20 @@ public class InvoiceApplyHeader extends AuditDomain {
     private String applyHeaderNumber;
 
     @ApiModelProperty(value = "（need Value Set） D : Draft S : Success F : Fail C : Canceled")
+    @LovValue(lovCode = "HEXAM-INV-HEADER-STATUS-48208", meaningField = "applyStatusMeaning")
     private String applyStatus;
+
+    @Transient
+//    @ExcelColumn(en="Apply Status Meaning", order = 6)
+    private String applyStatusMeaning;
+
+    @Transient
+    @ApiModelProperty(value = "Invoice Color Meaning")
+    private String invoiceColorMeaning;
+
+    @Transient
+    @ApiModelProperty(value = "Invoice Type Meaning")
+    private String invoiceTypeMeaning;
 
     private String attribute1;
 
@@ -121,12 +137,14 @@ public class InvoiceApplyHeader extends AuditDomain {
     private Integer delFlag;
 
     @ApiModelProperty(value = "sum(line exclude_tax_amount)")
-    private Double excludeTaxAmount;
+    private BigDecimal excludeTaxAmount;
 
     @ApiModelProperty(value = "(need Value Set) R : Red invoice B : Blue invoice")
+    @LovValue(lovCode = "HEXAM-INV-HEADER-COLOR-48208", meaningField = "invoiceColorMeaning")
     private String invoiceColor;
 
     @ApiModelProperty(value = "(need Value Set) P : Paper invoice E : E-invoice")
+    @LovValue(lovCode = "HEXAM-INV-HEADER-TYPE-48208", meaningField = "invoiceTypeMeaning")
     private String invoiceType;
 
     private String remark;
@@ -134,12 +152,15 @@ public class InvoiceApplyHeader extends AuditDomain {
     private Date submitTime;
 
     @ApiModelProperty(value = "sum(line tax_amount)")
-    private Double taxAmount;
+    private BigDecimal taxAmount;
 
     private Long tenantId;
 
     @ApiModelProperty(value = "sum(line total_amount)")
-    private Double totalAmount;
+    private BigDecimal totalAmount;
+
+    @Transient
+    private List<InvoiceApplyLine> invoiceApplyLines;
 
 
 }

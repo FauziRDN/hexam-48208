@@ -3,6 +3,7 @@ package com.hand.demo.app.service;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import com.hand.demo.domain.entity.InvoiceApplyLine;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,5 +31,8 @@ public interface InvoiceApplyLineService {
      */
     void saveData(List<InvoiceApplyLine> invoiceApplyLines);
 
+    @Transactional
+    void saveInvoiceLine(Long organizationId, Long headerId, InvoiceApplyLine invoiceApplyLine);
+    void updateRedisCache(Long applyHeaderId);
 }
 

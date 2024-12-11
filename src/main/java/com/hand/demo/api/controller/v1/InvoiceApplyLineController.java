@@ -37,6 +37,7 @@ public class InvoiceApplyLineController extends BaseController {
     @Autowired
     private InvoiceApplyLineService invoiceApplyLineService;
 
+    //nomor tiga untuk menampilkan data header dengan meaning
     @ApiOperation(value = "列表")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping
@@ -47,6 +48,7 @@ public class InvoiceApplyLineController extends BaseController {
         return Results.success(list);
     }
 
+    //nomor empat menampilkan data header dengan line
     @ApiOperation(value = "明细")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @GetMapping("/{applyLineId}/detail")
@@ -55,6 +57,7 @@ public class InvoiceApplyLineController extends BaseController {
         return Results.success(invoiceApplyLine);
     }
 
+    //nomor lima untuk insert update
     @ApiOperation(value = "创建或更新")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping
@@ -66,6 +69,7 @@ public class InvoiceApplyLineController extends BaseController {
         return Results.success(invoiceApplyLines);
     }
 
+    //nomor enam untuk softdelete redist
     @ApiOperation(value = "删除")
     @Permission(level = ResourceLevel.ORGANIZATION)
     @DeleteMapping

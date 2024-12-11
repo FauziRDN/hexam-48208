@@ -105,28 +105,28 @@ public class InvoiceApplyLine extends AuditDomain {
     private String contentName;
 
     @ApiModelProperty(value = "total_amount - tax_amount")
-    private Object excludeTaxAmount;
+    private BigDecimal excludeTaxAmount;
 
     private String invoiceName;
 
-    private Object quantity;
+    private BigDecimal quantity;
 
-    private Object remark;
+    private String remark;
 
     @ApiModelProperty(value = "total_amount * tax_rate")
-    private Object taxAmount;
+    private BigDecimal taxAmount;
 
     private String taxClassificationNumber;
 
     @ApiModelProperty(value = "eg: 0.08")
-    private Object taxRate;
+    private BigDecimal taxRate;
 
     private Long tenantId;
 
     @ApiModelProperty(value = "unit_price * quantity")
-    private Object totalAmount;
+    private BigDecimal totalAmount;
 
-    private Object unitPrice;
+    private BigDecimal unitPrice;
 
 
 }

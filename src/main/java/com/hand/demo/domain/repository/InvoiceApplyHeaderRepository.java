@@ -1,10 +1,12 @@
 package com.hand.demo.domain.repository;
 
 import com.hand.demo.api.dto.InvoiceHeaderDTO;
+import com.hand.demo.domain.entity.InvoiceApplyLine;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.hzero.mybatis.base.BaseRepository;
 import com.hand.demo.domain.entity.InvoiceApplyHeader;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ public interface InvoiceApplyHeaderRepository extends BaseRepository<InvoiceAppl
     static Page<InvoiceApplyHeader> listInvoiceHeaders(String searchQuery, InvoiceHeaderDTO invoiceHeaderDTO, PageRequest pageRequest) {
         return listInvoiceHeaders(searchQuery, invoiceHeaderDTO, pageRequest);
     }
+    List<InvoiceApplyLine> findLinesByHeaderId(@Param("headerId") Long headerId);
+    boolean isValidValue(String value, String lovCode);
     /**
      * 查询
      *
@@ -33,4 +37,5 @@ public interface InvoiceApplyHeaderRepository extends BaseRepository<InvoiceAppl
      * @return 返回值
      */
     InvoiceApplyHeader selectByPrimary(Long applyHeaderId);
+
 }
