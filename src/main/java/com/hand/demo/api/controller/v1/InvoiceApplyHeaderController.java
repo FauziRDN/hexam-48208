@@ -12,6 +12,8 @@ import org.hzero.boot.platform.lov.annotation.ProcessLovValue;
 import org.hzero.core.base.BaseConstants;
 import org.hzero.core.base.BaseController;
 import org.hzero.core.util.Results;
+import org.hzero.export.annotation.ExcelExport;
+import org.hzero.export.vo.ExportParam;
 import org.hzero.mybatis.helper.SecurityTokenHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import com.hand.demo.domain.entity.InvoiceApplyHeader;
 import com.hand.demo.domain.repository.InvoiceApplyHeaderRepository;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -92,6 +95,18 @@ public class InvoiceApplyHeaderController extends BaseController {
     @DeleteMapping("/{applyHeaderId}")
     public ResponseEntity<InvoiceApplyHeader> deleteById(@PathVariable Long applyHeaderId) {
         return invoiceApplyHeaderService.deleteById(applyHeaderId);
+    }
+
+    @ApiOperation(value = "Export")
+    @GetMapping("/export")
+    @Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)
+    @ExcelExport(InvoiceApplyHeader.class)
+    public ResponseEntity<List<InvoiceApplyHeader>> export(
+            @RequestParam("exportType") String exportType,
+            ExportParam exportParam, HttpServletResponse response, InvoiceApplyHeader invoiceApplyHeader, @PathVariable Long organizationId, @ApiIgnore @SortDefault(value = InvoiceApplyHeader.FIELD_APPLY_HEADER_ID,
+            direction = Sort.Direction.ASC) PageRequest pageRequest) {
+        Page<InvoiceApplyHeader> page = invoiceApplyHeaderService.selectList(pageRequest, invoiceApplyHeader);
+        return ResponseEntity.ok(page);
     }
 
 

@@ -1,5 +1,6 @@
 package com.hand.demo.api.controller.v1;
 
+import com.hand.demo.domain.entity.InvoiceApplyHeader;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
@@ -9,6 +10,8 @@ import io.choerodon.swagger.annotation.Permission;
 import io.swagger.annotations.ApiOperation;
 import org.hzero.core.base.BaseController;
 import org.hzero.core.util.Results;
+import org.hzero.export.annotation.ExcelExport;
+import org.hzero.export.vo.ExportParam;
 import org.hzero.mybatis.helper.SecurityTokenHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import com.hand.demo.domain.entity.InvoiceApplyLine;
 import com.hand.demo.domain.repository.InvoiceApplyLineRepository;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -77,6 +81,17 @@ public class InvoiceApplyLineController extends BaseController {
         SecurityTokenHelper.validToken(invoiceApplyLines);
         invoiceApplyLineRepository.batchDeleteByPrimaryKey(invoiceApplyLines);
         return Results.success();
+    }
+
+    @GetMapping("/export")
+    @Permission(level = ResourceLevel.ORGANIZATION, permissionLogin = true)
+    @ExcelExport(InvoiceApplyLine.class)
+    public ResponseEntity<List<InvoiceApplyLine>> export(
+            @RequestParam("exportType") String exportType,
+            ExportParam exportParam, HttpServletResponse response, InvoiceApplyLine invoiceApplyLine, @PathVariable Long organizationId, @ApiIgnore @SortDefault(value = InvoiceApplyHeader.FIELD_APPLY_HEADER_ID,
+            direction = Sort.Direction.ASC) PageRequest pageRequest) {
+        Page<InvoiceApplyLine> page = invoiceApplyLineService.selectListRD(pageRequest, invoiceApplyLine);
+        return ResponseEntity.ok(page);
     }
 
 }

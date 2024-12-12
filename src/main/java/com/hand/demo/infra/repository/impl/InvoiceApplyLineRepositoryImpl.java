@@ -32,6 +32,11 @@ public class InvoiceApplyLineRepositoryImpl extends BaseRepositoryImpl<InvoiceAp
     }
 
     @Override
+    public List<InvoiceApplyLine> selectListRD(InvoiceApplyLine invoiceApplyLine) {
+        return invoiceApplyLineMapper.selectListRD(invoiceApplyLine);
+    }
+
+    @Override
     public InvoiceApplyLine selectByPrimary(Long applyLineId) {
         InvoiceApplyLine invoiceApplyLine = new InvoiceApplyLine();
         invoiceApplyLine.setApplyLineId(applyLineId);

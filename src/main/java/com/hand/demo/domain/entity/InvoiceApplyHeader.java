@@ -181,6 +181,15 @@ public class InvoiceApplyHeader extends AuditDomain {
     @Transient
     private List<InvoiceApplyLine> invoiceApplyLines;
 
+    @Transient
+    private String requester;
 
+    public String getRequester() {
+        return requester;
+    }
+
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
 }
 

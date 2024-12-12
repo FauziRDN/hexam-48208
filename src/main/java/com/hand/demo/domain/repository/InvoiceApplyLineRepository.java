@@ -19,6 +19,7 @@ public interface InvoiceApplyLineRepository extends BaseRepository<InvoiceApplyL
      * @return 返回值
      */
     List<InvoiceApplyLine> selectList(InvoiceApplyLine invoiceApplyLine);
+    List<InvoiceApplyLine> selectListRD(InvoiceApplyLine invoiceApplyLine);
 
     /**
      * 根据主键查询（可关联表）

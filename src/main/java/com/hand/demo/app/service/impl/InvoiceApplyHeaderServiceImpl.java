@@ -1,18 +1,25 @@
 package com.hand.demo.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hand.demo.app.service.InvoiceApplyLineService;
 import com.hand.demo.domain.entity.InvoiceApplyLine;
 import com.hand.demo.domain.repository.InvoiceApplyLineRepository;
 import com.hand.demo.infra.mapper.InvoiceApplyHeaderMapper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.github.resilience4j.core.StringUtils;
+import org.apache.dubbo.common.logger.Logger;
+import org.apache.dubbo.common.logger.LoggerFactory;
 import org.hzero.boot.platform.code.builder.CodeRuleBuilder;
 import org.hzero.boot.platform.lov.adapter.LovAdapter;
 import org.hzero.core.redis.RedisHelper;
+import org.hzero.core.redis.RedisQueueHelper;
 import org.hzero.core.util.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.hand.demo.app.service.InvoiceApplyHeaderService;
@@ -53,9 +60,10 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
 
     @Autowired
     private RedisHelper redisHelper;
+    private RedisQueueHelper redisQueueHelper;
     @Autowired
     private CodeRuleBuilder codeRuleBuilder;
-
+    private static final Logger logger = LoggerFactory.getLogger(InvoiceApplyHeaderServiceImpl.class);
 
     //nomor tiga buat muncilin list
     @Override
@@ -70,11 +78,17 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
         String redisValue = redisHelper.strGet(redisKey);
         InvoiceApplyHeader invoiceApplyHeader;
         List<InvoiceApplyLine> invoiceApplyLines;
+        InvoiceApplyHeader invoice= invoiceApplyHeaderMapper.selectByPrimaryKey(applyHeaderId);
+        CustomUserDetails customerDetails = DetailsHelper.getUserDetails();
+        invoice.setRequester(customerDetails.getRealName());
         if (StringUtils.isNotEmpty(redisValue)) {
             invoiceApplyHeader = JSON.parseObject(redisValue, InvoiceApplyHeader.class);
         } else {
             invoiceApplyHeader = invoiceApplyHeaderRepository.selectByPrimaryKey(applyHeaderId);
-            invoiceApplyLines = invoiceApplyLineRepository.selectByHeaderId(applyHeaderId);
+            InvoiceApplyLine invoiceApplyLine = new InvoiceApplyLine();
+            invoiceApplyLine.setApplyHeaderId(invoiceApplyHeader.getApplyHeaderId());
+            invoiceApplyLines = invoiceApplyLineRepository.selectList(invoiceApplyLine);
+            //invoiceApplyLines = invoiceApplyLineRepository.selectByHeaderId(applyHeaderId);
             invoiceApplyHeader.setInvoiceApplyLines(invoiceApplyLines);
             redisHelper.strSet(redisKey, JSON.toJSONString(invoiceApplyHeader));
         }
@@ -95,7 +109,8 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
         }
 
         List<InvoiceApplyHeader> insertList = invoiceApplyHeaders.stream().filter(line -> line.getApplyHeaderId() == null)
-                .peek(header -> header.setApplyHeaderNumber(codeRuleBuilder.generateCode("HEXAM-48208-EXAM", new HashMap<>())))
+//                .peek(header -> header.setApplyHeaderNumber(codeRuleBuilder.generateCode("HEXAM-48208-EXAM", new HashMap<>())))
+                .peek(header -> header.setApplyHeaderNumber(generateApplyHeaderNumber()))
                 .collect(Collectors.toList());
         List<InvoiceApplyHeader> updateList = invoiceApplyHeaders.stream().filter(line -> line.getApplyHeaderId() != null)
                 .peek(header -> {
@@ -148,6 +163,31 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
         invoiceApplyHeaderRepository.updateByPrimaryKeySelective(header);
     }
 
+    @Override
+    public void invoiceSchedulingTask(String delFlag, String applyStatus, String invoiceColor, String invoiceType) {
+        List<InvoiceApplyHeader> invoiceApplyHeaders = invoiceApplyHeaderRepository.selectList(new InvoiceApplyHeader() {{
+            setDelFlag(Integer.parseInt(delFlag));
+            setApplyStatus(applyStatus);
+            setInvoiceColor(invoiceColor);
+            setInvoiceType(invoiceType);
+        }});
+        if (invoiceApplyHeaders.isEmpty()) {
+            logger.info("InvoiceApplyHeaders is empty for scheduling task");
+            return;
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        // Convert each InvoiceApplyHeader to JSON string and collect into a List
+        try {
+            // Convert list to JSON string
+            String jsonString = objectMapper.writeValueAsString(invoiceApplyHeaders);
+            // Save to Redis Message Queue
+            String redisKey = "Hexam-48208:Exam";
+            redisQueueHelper.push(redisKey, jsonString);
+        } catch (JsonProcessingException e) {
+            throw new CommonException("Error converting list to JSON");
+        }
+    }
+
 
     private String generateApplyHeaderNumber() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -166,11 +206,6 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
         return codeRuleBuilder.generateCode(ruleCode, variableMap);
     }
 
-    //    List<InvoiceApplyHeader> insertList = invoiceApplyHeaders.stream().filter(line -> line.getApplyHeaderId() == null).collect(Collectors.toList());
-//        List<InvoiceApplyHeader> updateList = invoiceApplyHeaders.stream().filter(line -> line.getApplyHeaderId() != null).collect(Collectors.toList());
-//        invoiceApplyHeaderRepository.batchInsertSelective(insertList);
-//        invoiceApplyHeaderRepository.batchUpdateByPrimaryKeySelective(updateList);
-//    }
     public boolean validastor(String value) {
         List<String> validApplyStatus = Arrays.asList("D", "S", "F", "C");
         List<String> validInvoiceColor = Arrays.asList("R", "B");

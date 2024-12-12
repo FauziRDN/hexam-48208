@@ -130,5 +130,105 @@
             </if>
         </where>
     </select>
+    <select id="exportWithHeaderNumber" resultType="com.hand.demo.domain.entity.InvoiceApplyLine">
+        SELECT
+        <include refid = "BaseSql"/>, 4iah.apply_header_number
+        FROM 46319_invoice_apply_line 4ial
+        LEFT JOIN 46312_invoice_apply_header 4iah ON 4ial.apply_header_id = 4iah.apply_header_id
+        <where>
+            <if test="applyLineId !=null">
+                and 4ial.apply_line_id = #{applyLineId,jdbcType = INTEGER}
+            </if>
+            <if test="tenantId !=null">
+                and 4ial.tenant_id = #{tenantId,jdbcType = INTEGER}
+            </if>
+            <if test="applyHeaderId !=null">
+                and 4ial.apply_header_id = #{applyHeaderId,jdbcType = INTEGER}
+            </if>
+            <if test="applyHeaderNumber !=null">
+                <bind name="applyHeaderNumberLike" value="'%' + applyHeaderNumber + '%'"/>
+                and 4iah.apply_header_number LIKE #{applyHeaderNumberLike,jdbcType = VARCHAR}
+            </if>
+            <if test="invoiceName !=null">
+                <bind name="invoiceNameLike" value="'%' + invoiceName + '%'"/>
+                and 4ial.invoice_name LIKE #{invoiceNameLike,jdbcType = VARCHAR}
+            </if>
+            <if test="contentName !=null">
+                <bind name="contentNameLike" value="'%' + contentName + '%'"/>
+                and 4ial.content_name LIKE #{contentNameLike,jdbcType = VARCHAR}
+            </if>
+            <if test="taxClassificationNumber !=null">
+                <bind name="taxClassificationNumberLike" value="'%' + taxClassificationNumber + '%'"/>
+                and 4ial.tax_classification_numberLIKE= #{taxClassificationNumberLike,jdbcType = VARCHAR}
+            </if>
+            <if test="unitPrice !=null">
+                and 4ial.unit_price = #{unitPrice,jdbcType = OTHER}
+            </if>
+            <if test="quantity !=null">
+                and 4ial.quantity = #{quantity,jdbcType = OTHER}
+            </if>
+            <if test="excludeTaxAmount !=null">
+                and 4ial.exclude_tax_amount = #{excludeTaxAmount,jdbcType = OTHER}
+            </if>
+            <if test="taxRate !=null">
+                and 4ial.tax_rate = #{taxRate,jdbcType = OTHER}
+            </if>
+            <if test="taxAmount !=null">
+                and 4ial.tax_amount = #{taxAmount,jdbcType = OTHER}
+            </if>
+            <if test="totalAmount !=null">
+                and 4ial.total_amount = #{totalAmount,jdbcType = OTHER}
+            </if>
+            <if test="remark !=null">
+                <bind name="remarkLike" value="'%' + remark + '%'"/>
+                and 4ial.remark = #{remark,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute1 !=null">
+                and 4ial.ATTRIBUTE1 = #{attribute1,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute2 !=null">
+                and 4ial.ATTRIBUTE2 = #{attribute2,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute3 !=null">
+                and 4ial.ATTRIBUTE3 = #{attribute3,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute4 !=null">
+                and 4ial.ATTRIBUTE4 = #{attribute4,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute5 !=null">
+                and 4ial.ATTRIBUTE5 = #{attribute5,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute6 !=null">
+                and 4ial.ATTRIBUTE6 = #{attribute6,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute7 !=null">
+                and 4ial.ATTRIBUTE7 = #{attribute7,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute8 !=null">
+                and 4ial.ATTRIBUTE8 = #{attribute8,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute9 !=null">
+                and 4ial.ATTRIBUTE9 = #{attribute9,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute10 !=null">
+                and 4ial.ATTRIBUTE10 = #{attribute10,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute11 !=null">
+                and 4ial.ATTRIBUTE11 = #{attribute11,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute12 !=null">
+                and 4ial.ATTRIBUTE12 = #{attribute12,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute13 !=null">
+                and 4ial.ATTRIBUTE13 = #{attribute13,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute14 !=null">
+                and 4ial.ATTRIBUTE14 = #{attribute14,jdbcType = VARCHAR}
+            </if>
+            <if test="attribute15 !=null">
+                and 4ial.ATTRIBUTE15 = #{attribute15,jdbcType = VARCHAR}
+            </if>
+        </where>
+    </select>
 </mapper>
 

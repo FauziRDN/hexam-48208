@@ -44,6 +44,11 @@ public class InvoiceApplyLineServiceImpl implements InvoiceApplyLineService {
         return PageHelper.doPageAndSort(pageRequest, () -> invoiceApplyLineRepository.selectList(invoiceApplyLine));
     }
 
+    @Override
+    public Page<InvoiceApplyLine> selectListRD(PageRequest pageRequest, InvoiceApplyLine invoiceApplyLine) {
+        return PageHelper.doPageAndSort(pageRequest, () -> invoiceApplyLineRepository.selectListRD(invoiceApplyLine));
+    }
+
     //nomor tujuh insert update invoice line
     @Override
     public void saveData(List<InvoiceApplyLine> invoiceApplyLines) {
@@ -134,6 +139,7 @@ public class InvoiceApplyLineServiceImpl implements InvoiceApplyLineService {
         invoiceApplyHeader.setInvoiceApplyLines(invoiceApplyLines);
         redisHelper.strSet(headerCacheKey, JSON.toJSONString(invoiceApplyHeader), 6, TimeUnit.MINUTES);
     }
+
 
 
 }

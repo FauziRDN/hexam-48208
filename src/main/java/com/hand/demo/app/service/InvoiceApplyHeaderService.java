@@ -40,5 +40,6 @@ public interface InvoiceApplyHeaderService {
     void updateHeaderAmounts(Long applyHeaderId);
 
 
+    void invoiceSchedulingTask(String delFlag, String applyStatus, String invoiceColor, String invoiceType);
 }
 

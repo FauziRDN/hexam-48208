@@ -23,6 +23,8 @@ public interface InvoiceApplyLineService {
      * @return 返回值
      */
     Page<InvoiceApplyLine> selectList(PageRequest pageRequest, InvoiceApplyLine invoiceApplyLines);
+    Page<InvoiceApplyLine> selectListRD(PageRequest pageRequest, InvoiceApplyLine invoiceApplyLines);
+
 
     /**
      * 保存数据
@@ -34,5 +36,6 @@ public interface InvoiceApplyLineService {
     @Transactional
     void saveInvoiceLine(Long organizationId, Long headerId, InvoiceApplyLine invoiceApplyLine);
     void updateRedisCache(Long applyHeaderId);
+
 }
 
