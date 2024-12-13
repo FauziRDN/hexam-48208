@@ -19,6 +19,7 @@ public interface InvoiceApplyHeaderMapper extends BaseMapper<InvoiceApplyHeader>
      * @param invoiceApplyHeader 查询条件
      * @return 返回值
      */
+    //com.hand.demo.infra.mapper.InvoiceApplyHeaderMapper.selectList
     List<InvoiceApplyHeader> selectList(InvoiceApplyHeader invoiceApplyHeader);
 
 //    List selectInvoiceHeaders(InvoiceHeaderDTO invoiceHeaderDTO, Integer delFlag);

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
-@JobHandler("HEXAM-INV-HEADER-JOB")
+@JobHandler("Hexam-48208:Exam")
 public class InvoiceHeaderJob implements IJobHandler {
 
     private final InvoiceApplyHeaderService headerService;

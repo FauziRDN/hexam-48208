@@ -94,7 +94,7 @@ logging:
   level:
     org.apache.ibatis: debug
     io.choerodon: debug
-    com.hand: debug
+    com.hand.demo: debug
 hzero:
   lov:
     sql:
