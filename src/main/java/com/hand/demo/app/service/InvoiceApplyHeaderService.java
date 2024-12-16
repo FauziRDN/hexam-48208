@@ -41,5 +41,6 @@ public interface InvoiceApplyHeaderService {
 
 
     void invoiceSchedulingTask(String delFlag, String applyStatus, String invoiceColor, String invoiceType);
+    Page<InvoiceApplyHeader> selectListTenant(PageRequest pageRequest, InvoiceApplyHeader invoiceApplyHeader);
 }
 

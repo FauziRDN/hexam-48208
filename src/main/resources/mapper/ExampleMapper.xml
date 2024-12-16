@@ -1,5 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hand.demo.infra.mapper.ExampleMapper">
-
+    <!--    buat select seperti generate-->
+    <sql id = "BaseSql">
+        file.bucket_name,
+        file.directory,
+        file.content_type,
+        file.storage_unit,
+        file.storage_size
+    </sql>
+    <select id="selectList" resultType="com.hand.demo.api.dto.PrefixDTO"
+            parameterType="com.hand.demo.api.dto.PrefixDTO">
+        select
+        <include refid="BaseSql"/>
+        from hfle_upload_config file
+        <where>
+            <if test="bucketName != null">
+                and file.bucket_name = #{bucketName,jdbcType=VARCHAR}
+            </if>
+            <if test="directory != null">
+                and file.directory = #{directory,jdbcType=VARCHAR}
+            </if>
+            <if test="contentType != null">
+                and file.content_type = #{contentType,jdbcType=VARCHAR}
+            </if>
+            <if test="storageUnit != null">
+                and file.storage_unit = #{storageUnit,jdbcType=VARCHAR}
+            </if>
+            <if test="storageSize != null">
+                and file.storage_size = #{storageSize,jdbcType=DECIMAL}
+            </if>
+            <if test="tenantAdminFlag != null and !tenantAdminFlag">
+                -- Filter untuk pengguna biasa, hanya melihat data miliknya
+                AND file.created_by = #{createdBy, jdbcType=BIGINT}
+            </if>
+        </where>
+    </select>
 </mapper>

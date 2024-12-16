@@ -16,11 +16,15 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.github.resilience4j.core.StringUtils;
 import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
+import org.hzero.boot.apaas.common.userinfo.infra.feign.IamRemoteService;
 import org.hzero.boot.platform.code.builder.CodeRuleBuilder;
 import org.hzero.boot.platform.lov.adapter.LovAdapter;
+import org.hzero.boot.platform.lov.annotation.ProcessLovValue;
+import org.hzero.core.base.BaseConstants;
 import org.hzero.core.redis.RedisHelper;
 import org.hzero.core.redis.RedisQueueHelper;
 import org.hzero.core.util.Results;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.hand.demo.app.service.InvoiceApplyHeaderService;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +61,9 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
 
     @Autowired
     private LovAdapter lovAdapter;
+
+    @Autowired
+    private IamRemoteService iamRemoteService;
 
     @Autowired
     private RedisHelper redisHelper;
@@ -231,5 +238,102 @@ public class InvoiceApplyHeaderServiceImpl implements InvoiceApplyHeaderService 
         String cacheKey = "Hexam-48208:Exam" + header.getApplyHeaderId();
         redisHelper.delKey(cacheKey);
     }
+
+    @Override
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    public Page<InvoiceApplyHeader> selectListTenant(PageRequest pageRequest, InvoiceApplyHeader invoiceApplyHeader) {
+        String iamUserString = iamRemoteService.selectSelf().getBody();
+        JSONObject jsonIam = new JSONObject(iamUserString);
+
+        Boolean tenantAdminFlag = jsonIam.getBoolean("tenantAdminFlag");
+
+        if (invoiceApplyHeader.getDelFlag() == null) {
+            invoiceApplyHeader.setDelFlag(0);
+        }
+        invoiceApplyHeader.setTenantAdminFlag(tenantAdminFlag);
+
+        return PageHelper.doPageAndSort(pageRequest, () -> invoiceApplyHeaderRepository.selectList(invoiceApplyHeader));
+    }
+
+
+
+//    @Override
+//    public InvoiceApplyHeader selectListForExcel(InvoiceApplyHeader invoiceApplyHeader, Long organizationId) {
+//        List<String> listStatus = invoiceApplyHeader.getListApplyStatus();
+//        List<Map<String, Object>> listApplyStatusValue = lovAdapter.queryLovData("APPLY_STATUS", organizationId, null, null, null, null);
+//        List<Map<String, Object>> listInvoiceType = lovAdapter.queryLovData("INVOICE_TYPE", organizationId, null, null, null, null);
+//
+//        ArrayList<String> listStatusBefore = new ArrayList<>();
+//        if (invoiceApplyHeader.getListApplyStatus() != null) {
+//            listStatusBefore = new ArrayList<>(invoiceApplyHeader.getListApplyStatus());
+//
+//            for (int i = 0; i < listStatus.size(); i++) {
+//                for (Map<String, Object> lovValue : listApplyStatusValue) {
+//                    if (listStatus.get(i).equals(lovValue.get("meaning"))) {
+//                        listStatus.set(i, (String) lovValue.get("value"));
+//                        break;
+//                    }
+//                }
+//            }
+//            invoiceApplyHeader.setListApplyStatus(listStatus);
+//        }
+//
+//        String invoiceTypeBefore = "";
+//        if (invoiceApplyHeader.getInvoiceTypeParam() != null) {
+//            String invoiceTypeCode = invoiceApplyHeader.getInvoiceTypeParam();
+//            invoiceTypeBefore = invoiceApplyHeader.getInvoiceTypeParam();
+//            for (Map<String, Object> lovValue : listInvoiceType) {
+//                if (invoiceTypeCode.equals(lovValue.get("meaning"))) {
+//                    invoiceTypeCode = (String) lovValue.get("value");
+//                    break;
+//                }
+//            }
+//            invoiceApplyHeader.setInvoiceTypeParam(invoiceTypeCode);
+//        }
+//
+//        List<invoiceApplyHeader> headersDTO = invoiceApplyHeaderRepository.selectList(invoiceApplyHeader);
+//
+//        // Assuming iamRemoteService is properly defined and imported
+//        String iamUserString = iamRemoteService.selectSelf().getBody();
+//        JSONObject jsonIam = new JSONObject(iamUserString);
+//        String tenantName = jsonIam.getString("tenantName");
+//
+//        Set<Long> headerIds = new HashSet<>();
+//        for (invoiceApplyHeader header : headersDTO) {
+//            headerIds.add(header.getApplyHeaderId());
+//        }
+//
+//        List<InvoiceApplyLine> linesByHeader = invoiceApplyLineRepository.selectByHeaderIds(headerIds);
+//
+//        Map<Long, List<InvoiceApplyLine>> linesGroupedByHeaderId = linesByHeader.stream()
+//                .collect(Collectors.groupingBy(InvoiceApplyLine::getApplyHeaderId));
+//
+//        for (invoiceApplyHeader dto : headersDTO) {
+//            List<InvoiceApplyLine> lines = linesGroupedByHeaderId.get(dto.getApplyHeaderId());
+//            if (lines != null) {
+//                String concatInvoiceName = lines.stream().map(InvoiceApplyLine::getInvoiceName).collect(Collectors.joining(", "));
+//                dto.setListLineName(concatInvoiceName);
+//            }
+//        }
+//
+//        InvoiceApplyReportQueryDTO reportQueryDTO = new InvoiceApplyReportQueryDTO();
+//        reportQueryDTO.setTenantName(tenantName);
+//        reportQueryDTO.setInvoiceNumberFrom(invoiceApplyHeader.getInvoiceNumberFrom());
+//        reportQueryDTO.setInvoiceNumberTo(invoiceApplyHeader.getInvoiceNumberTo());
+//        reportQueryDTO.setCreationDateFrom(invoiceApplyHeader.getCreationDateFrom());
+//        reportQueryDTO.setCreationDateTo(invoiceApplyHeader.getCreationDateTo());
+//        reportQueryDTO.setSubmitTimeFrom(invoiceApplyHeader.getSubmitTimeFrom());
+//        reportQueryDTO.setSubmitTimeTo(invoiceApplyHeader.getSubmitTimeTo());
+//        reportQueryDTO.setListApplyStatus(invoiceApplyHeader.getListApplyStatus());
+//        if (invoiceApplyHeader.getListApplyStatus() != null) {
+//            reportQueryDTO.setListStatusString(listStatusBefore.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+//        }
+//        reportQueryDTO.setInvoiceTypeParam(invoiceTypeBefore);
+//        reportQueryDTO.setListHeader(headersDTO);
+//
+//        return reportQueryDTO;
+//    }
+
+
 }
 

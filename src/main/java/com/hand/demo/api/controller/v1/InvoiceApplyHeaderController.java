@@ -53,6 +53,15 @@ public class InvoiceApplyHeaderController extends BaseController {
         Page<InvoiceApplyHeader> list = invoiceApplyHeaderService.selectList(pageRequest, invoiceApplyHeader);
         return Results.success(list);
     }
+    @ApiOperation(value = "List task")
+    @Permission(level = ResourceLevel.ORGANIZATION)
+    @ProcessLovValue(targetField = BaseConstants.FIELD_BODY)
+    @GetMapping("/task")
+    public ResponseEntity<Page<InvoiceApplyHeader>> selectListTenant(InvoiceApplyHeader invoiceApplyHeader, @PathVariable Long organizationId, @ApiIgnore @SortDefault(value = InvoiceApplyHeader.FIELD_APPLY_HEADER_ID,
+            direction = Sort.Direction.DESC) PageRequest pageRequest) {
+        Page<InvoiceApplyHeader> list = invoiceApplyHeaderService.selectList(pageRequest, invoiceApplyHeader);
+        return Results.success(list);
+    }
 
     //nomor empat buat munculin detail dengan line
     @ApiOperation(value = "Details")
@@ -96,6 +105,8 @@ public class InvoiceApplyHeaderController extends BaseController {
     public ResponseEntity<InvoiceApplyHeader> deleteById(@PathVariable Long applyHeaderId) {
         return invoiceApplyHeaderService.deleteById(applyHeaderId);
     }
+
+
 
     @ApiOperation(value = "Export")
     @GetMapping("/export")

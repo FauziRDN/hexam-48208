@@ -184,6 +184,9 @@ public class InvoiceApplyHeader extends AuditDomain {
     @Transient
     private String requester;
 
+    @Transient
+    private Boolean TenantAdminFlag;
+
     public String getRequester() {
         return requester;
     }
